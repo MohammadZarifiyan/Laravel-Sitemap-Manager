@@ -3,10 +3,10 @@
 namespace MohammadZarifiyan\LaravelSitemapManager\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
-use MohammadZarifiyan\LaravelSitemapManager\Models\Sitemap as SitemapModel;
 use Illuminate\Http\Request;
-use MohammadZarifiyan\LaravelSitemapManager\SitemapRestrictionType;
+use Illuminate\Support\Facades\Storage;
+use MohammadZarifiyan\LaravelSitemapManager\Enums\SitemapRestrictionType;
+use MohammadZarifiyan\LaravelSitemapManager\Models\Sitemap as SitemapModel;
 use Spatie\Sitemap\SitemapIndex;
 use Spatie\Sitemap\Tags\Sitemap;
 

@@ -4,7 +4,7 @@ namespace MohammadZarifiyan\LaravelSitemapManager\Interfaces;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
-use MohammadZarifiyan\LaravelSitemapManager\SitemapRestrictionType;
+use MohammadZarifiyan\LaravelSitemapManager\Enums\SitemapRestrictionType;
 
 interface RestrictedRegistryInterface extends RegistryInterface
 {

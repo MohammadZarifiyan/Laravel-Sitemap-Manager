@@ -1,6 +1,6 @@
 <?php
 
-namespace MohammadZarifiyan\LaravelSitemapManager;
+namespace MohammadZarifiyan\LaravelSitemapManager\Enums;
 
 enum SitemapRestrictionType: string
 {

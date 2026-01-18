@@ -2,19 +2,19 @@
 
 namespace MohammadZarifiyan\LaravelSitemapManager\Console;
 
+use Exception;
+use Illuminate\Console\Command;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use MohammadZarifiyan\LaravelSitemapManager\DataTransferObjects\Domain;
+use MohammadZarifiyan\LaravelSitemapManager\Enums\SitemapRestrictionType;
 use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface;
 use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface;
 use MohammadZarifiyan\LaravelSitemapManager\Models\Sitemap as SitemapModel;
-use Exception;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use MohammadZarifiyan\LaravelSitemapManager\SitemapRestrictionType;
 use Spatie\Sitemap\Sitemap;
 
 class RefreshSitemapsCommand extends Command

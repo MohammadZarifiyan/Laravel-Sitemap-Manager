@@ -2,9 +2,9 @@
 
 namespace MohammadZarifiyan\LaravelSitemapManager\Models;
 
-use MohammadZarifiyan\LaravelSitemapManager\Events\SitemapDeleted;
 use Illuminate\Database\Eloquent\Model;
-use MohammadZarifiyan\LaravelSitemapManager\SitemapRestrictionType;
+use MohammadZarifiyan\LaravelSitemapManager\Enums\SitemapRestrictionType;
+use MohammadZarifiyan\LaravelSitemapManager\Events\SitemapDeleted;
 
 class Sitemap extends Model
 {

@@ -19,5 +19,12 @@
             "name": "Mohammad Zarifiyan",
             "email": "mohammadzarifiyan82@gmail.com"
         }
-    ]
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MohammadZarifiyan\\LaravelSitemapManager\\Providers\\SitemapManagerProvider"
+            ]
+        }
+    }
 }

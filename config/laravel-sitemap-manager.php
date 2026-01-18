@@ -3,6 +3,6 @@
 return [
     'disk' => env('SITEMAP_DISK', 'local'),
     'directory' => env('SITEMAP_DIRECTORY', 'sitemaps'),
-    'tags-per-sitemap' => env('SITEMAP_TAGS_PER_SITEMAP', 5000),
+    'tags-per-sitemap' => env('TAGS_PER_SITEMAP', 5000),
     'registries' => [],
 ];

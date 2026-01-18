@@ -75,7 +75,7 @@ class RefreshSitemapsCommand extends Command
         return $sitemap->add($tags->items());
     }
 
-    protected function updateOrCreateSitemapModel(string $name, SitemapRestrictionType $restrictionType, Sitemap $sitemap): SitemapModel
+    protected function updateOrCreateSitemapModel(string $name, ?SitemapRestrictionType $restrictionType, Sitemap $sitemap): SitemapModel
     {
         $disk = config('sitemap-manager.disk');
         $path = $this->generateSitemapPath();

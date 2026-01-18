@@ -1,0 +1,23 @@
+{
+    "name": "mohammad-zarifiyan/laravel-sitemap-manager",
+    "description": "A Laravel package for managing sitemaps.",
+    "type": "library",
+    "keywords": ["Sitemap", "Laravel"],
+    "version": "dev-master",
+    "require": {
+        "php": ">=8.1",
+        "laravel/framework": ">=7",
+        "spatie/laravel-sitemap": ">=5"
+    },
+    "autoload": {
+        "psr-4": {
+            "MohammadZarifiyan\\LaravelSitemapManager\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mohammad Zarifiyan",
+            "email": "mohammadzarifiyan82@gmail.com"
+        }
+    ]
+}

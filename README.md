@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use MohammadZarifiyan\LaravelSitemapManager\Controllers\SitemapController;
 
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
-Route::post('sitemaps/{name}-{counter}.xml', [SitemapController::class, 'show'])->name('sitemap.show');
-
+Route::post('sitemaps/{name}-{index}.xml', [SitemapController::class, 'show'])
+    ->whereNumber('index')
+    ->name('sitemap.show');
 ```

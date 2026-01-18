@@ -44,7 +44,7 @@ class SitemapController
         foreach ($groupedSitemaps as $name => $sitemaps) {
             foreach ($sitemaps as $index => $sitemap) {
                 $sitemapTag = Sitemap::create(
-                    route('sitemap.show', ['name' => $name, 'counter' => $index + 1]),
+                    route('sitemap.show', ['name' => $name, 'index' => $index]),
                 );
                 $sitemapTag->setLastModificationDate($sitemap->updated_at);
 
@@ -55,7 +55,7 @@ class SitemapController
         return $sitemapIndex->toResponse($request);
     }
 
-    public function show(Request $request, string $name, int $counter)
+    public function show(Request $request, string $name, int $index)
     {
         $sitemap = SitemapModel::where('name', $name)
             ->where(function (Builder $builder) use ($request) {
@@ -81,7 +81,7 @@ class SitemapController
                     });
                 });
             })
-            ->offset($counter - 1)
+            ->offset($index)
             ->firstOrFail();
 
         return response()->streamDownload(

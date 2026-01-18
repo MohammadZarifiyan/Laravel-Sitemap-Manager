@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sitemaps', function (Blueprint $table) {
             $table->id();
             $table->string('name')->index();
-            $table->boolean('global')->index();
+            $table->string('restriction_type')->nullable()->index();
             $table->string('disk');
             $table->string('path');
             $table->timestamps();

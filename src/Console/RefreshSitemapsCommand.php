@@ -8,12 +8,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use MohammadZarifiyan\LaravelSitemapManager\DataTransferObjects\Domain;
-use MohammadZarifiyan\LaravelSitemapManager\Interfaces\LocalRegistryInterface;
 use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface;
+use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface;
 use MohammadZarifiyan\LaravelSitemapManager\Models\Sitemap as SitemapModel;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use MohammadZarifiyan\LaravelSitemapManager\SitemapRestrictionType;
 use Spatie\Sitemap\Sitemap;
 
 class RefreshSitemapsCommand extends Command
@@ -45,13 +46,13 @@ class RefreshSitemapsCommand extends Command
                 $sitemap = $this->generateSitemap($tags);
                 $sitemapModel = $this->updateOrCreateSitemapModel(
                     $registry->getName(),
-                    $registry instanceof LocalRegistryInterface,
+                    $registry instanceof RestrictedRegistryInterface ? $registry->restrictionType() : null,
                     $sitemap
                 );
 
                 $sitemapModel->domains()->delete();
 
-                if ($registry instanceof LocalRegistryInterface) {
+                if ($registry instanceof RestrictedRegistryInterface) {
                     $this->attachDomains($sitemapModel, $registry->domains());
                 }
 
@@ -74,7 +75,7 @@ class RefreshSitemapsCommand extends Command
         return $sitemap->add($tags->items());
     }
 
-    protected function updateOrCreateSitemapModel(string $name, bool $isLocal, Sitemap $sitemap): SitemapModel
+    protected function updateOrCreateSitemapModel(string $name, SitemapRestrictionType $restrictionType, Sitemap $sitemap): SitemapModel
     {
         $disk = config('laravel-sitemap-manager::disk');
         $path = $this->generateSitemapPath();
@@ -91,7 +92,7 @@ class RefreshSitemapsCommand extends Command
             compact('disk', 'path'),
             [
                 'name' => $name,
-                'global' => !$isLocal,
+                'restriction_type' => $restrictionType
             ]
         );
 

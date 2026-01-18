@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use MohammadZarifiyan\LaravelSitemapManager\Models\Sitemap as SitemapModel;
 use Illuminate\Http\Request;
+use MohammadZarifiyan\LaravelSitemapManager\SitemapRestrictionType;
 use Spatie\Sitemap\SitemapIndex;
 use Spatie\Sitemap\Tags\Sitemap;
 
@@ -14,14 +15,29 @@ class SitemapController
     public function index(Request $request)
     {
         $sitemapIndex = SitemapIndex::create();
-        $groupedSitemaps = SitemapModel::where('global', true)
-            ->orWhereRelation('domains', function (Builder $builder) use ($request) {
-                $builder->where('host', $request->getHost());
-                $builder->where(function (Builder $builder) use ($request) {
-                    $builder->where('port', $request->getPort());
-                    $builder->orWhereNull('port');
+        $groupedSitemaps = SitemapModel::where(function (Builder $builder) use ($request) {
+            $builder->whereNull('restriction_type');
+            $builder->orWhere(function (Builder $builder) use ($request) {
+                $builder->where('restriction_type', SitemapRestrictionType::Legalization);
+                $builder->whereRelation('domains', function (Builder $builder) use ($request) {
+                    $builder->where('host', $request->getHost());
+                    $builder->where(function (Builder $builder) use ($request) {
+                        $builder->where('port', $request->getPort());
+                        $builder->orWhereNull('port');
+                    });
                 });
-            })
+            });
+            $builder->orWhere(function (Builder $builder) use ($request) {
+                $builder->where('restriction_type', SitemapRestrictionType::Prohibition);
+                $builder->whereDoesntHaveRelation('domains', function (Builder $builder) use ($request) {
+                    $builder->where('host', $request->getHost());
+                    $builder->where(function (Builder $builder) use ($request) {
+                        $builder->where('port', $request->getPort());
+                        $builder->orWhereNull('port');
+                    });
+                });
+            });
+        })
             ->get()
             ->groupBy('name');
 
@@ -43,12 +59,25 @@ class SitemapController
     {
         $sitemap = SitemapModel::where('name', $name)
             ->where(function (Builder $builder) use ($request) {
-                $builder->where('global', true);
-                $builder->orWhereRelation('domains', function (Builder $builder) use ($request) {
-                    $builder->where('host', $request->getHost());
-                    $builder->where(function (Builder $builder) use ($request) {
-                        $builder->where('port', $request->getPort());
-                        $builder->orWhereNull('port');
+                $builder->whereNull('restriction_type');
+                $builder->orWhere(function (Builder $builder) use ($request) {
+                    $builder->where('restriction_type', SitemapRestrictionType::Legalization);
+                    $builder->whereRelation('domains', function (Builder $builder) use ($request) {
+                        $builder->where('host', $request->getHost());
+                        $builder->where(function (Builder $builder) use ($request) {
+                            $builder->where('port', $request->getPort());
+                            $builder->orWhereNull('port');
+                        });
+                    });
+                });
+                $builder->orWhere(function (Builder $builder) use ($request) {
+                    $builder->where('restriction_type', SitemapRestrictionType::Prohibition);
+                    $builder->whereDoesntHaveRelation('domains', function (Builder $builder) use ($request) {
+                        $builder->where('host', $request->getHost());
+                        $builder->where(function (Builder $builder) use ($request) {
+                            $builder->where('port', $request->getPort());
+                            $builder->orWhereNull('port');
+                        });
                     });
                 });
             })

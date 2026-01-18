@@ -10,7 +10,7 @@ class TagsPaginator
     public static function fromArray(int $page, array $items): LengthAwarePaginatorContract
     {
         $tagsCount = count($items);
-        $tagsPerPage = config('laravel-sitemap-manager::tags-per-sitemap');
+        $tagsPerPage = config('sitemap-manager.tags-per-sitemap');
         $paginatorTags = array_slice($items, ($page - 1) * $tagsPerPage, $tagsPerPage);
 
         return new LengthAwarePaginator($paginatorTags, $tagsCount, $tagsPerPage);

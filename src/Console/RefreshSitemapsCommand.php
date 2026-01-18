@@ -27,7 +27,7 @@ class RefreshSitemapsCommand extends Command
 
     public function handle(): int
     {
-        $registries = config('laravel-sitemap-manager::registries');
+        $registries = config('sitemap-manager.registries');
 
         foreach ($registries as $registry) {
             if ($registry instanceof RegistryInterface === false) {
@@ -77,7 +77,7 @@ class RefreshSitemapsCommand extends Command
 
     protected function updateOrCreateSitemapModel(string $name, SitemapRestrictionType $restrictionType, Sitemap $sitemap): SitemapModel
     {
-        $disk = config('laravel-sitemap-manager::disk');
+        $disk = config('sitemap-manager.disk');
         $path = $this->generateSitemapPath();
 
         $this->line(sprintf('Saving %s sitemap in the %s (%s).', $name, $path, $disk));
@@ -103,7 +103,7 @@ class RefreshSitemapsCommand extends Command
 
     protected function generateSitemapPath(): string
     {
-        $directory = config('laravel-sitemap-manager::directory');
+        $directory = config('sitemap-manager.directory');
 
         return $directory . DIRECTORY_SEPARATOR . Str::uuid() . '.xml';
     }

@@ -4,6 +4,7 @@
     "type": "library",
     "keywords": ["Sitemap", "Laravel"],
     "version": "dev-master",
+    "license": "SEE LICENSE IN LICENSE",
     "require": {
         "php": ">=8.1",
         "laravel/framework": ">=7",

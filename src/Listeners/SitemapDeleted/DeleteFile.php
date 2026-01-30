@@ -1,6 +1,6 @@
 <?php
 
-namespace MohammadZarifiyan\LaravelSitemapManager\Listeners;
+namespace MohammadZarifiyan\LaravelSitemapManager\Listeners\SitemapDeleted;
 
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Storage;

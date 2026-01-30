@@ -2,7 +2,10 @@
 
 namespace MohammadZarifiyan\LaravelSitemapManager\Providers;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use MohammadZarifiyan\LaravelSitemapManager\Events;
+use MohammadZarifiyan\LaravelSitemapManager\Listeners;
 
 class SitemapManagerProvider extends ServiceProvider
 {
@@ -15,5 +18,10 @@ class SitemapManagerProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'../../migrations' => database_path('sitemap-manager.php')
         ], 'sitemap-manager-migrations');
+
+        Event::listen(
+            Events\SitemapDeleted::class,
+            Listeners\SitemapDeleted\DeleteFile::class
+        );
     }
 }

@@ -25,7 +25,7 @@ php artisan vendor:publish --provider="MohammadZarifiyan\LaravelSitemapManager\P
 php artisan migrate
 ```
 
-## Configuration (Optional)
+## Configuration
 To publish the configuration file:
 ```shell
 php artisan vendor:publish --provider="MohammadZarifiyan\LaravelSitemapManager\Providers\SitemapManagerProvider" --tag="sitemap-manager-config"

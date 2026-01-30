@@ -54,3 +54,107 @@ Make sure your server cron is configured to run Laravel’s scheduler.
 2. Sitemap files are generated in chunks
 3. Old sitemap files are replaced safely
 4. Metadata is persisted in the database
+
+# Creating a Custom Sitemap Registry
+Sitemap Manager allows you to **add your own data** sources by implementing the `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface` or `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface`.
+This document explains how to create a custom registry, handle pagination, and register it in the configuration.
+
+## 1. Implement `RegistryInterface`
+Create a new class that implements `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface`:
+```php
+<?php
+
+namespace App\Sitemaps;
+
+use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use MohammadZarifiyan\LaravelSitemapManager\TagsPaginator;
+use App\Models\Post;
+
+class PostRegistry implements RegistryInterface
+{
+    public function getName(): string
+    {
+        return 'posts';
+    }
+
+    public function tags(int $page): LengthAwarePaginator
+    {
+        // If you already have a LengthAwarePaginator:
+        return Post::query()
+            ->where('published', true)
+            ->paginate(config('sitemap-manager.tags-per-sitemap'), ['*'], 'page', $page);
+
+        // OR if you only have an array of URLs, use TagsPaginator:
+        // $urls = Post::query()->where('published', true)->pluck('url')->toArray();
+        // return TagsPaginator::fromArray($page, $urls);
+    }
+}
+```
+Notes:
+
+`getName()` returns a **unique name** for your registry.
+
+`tags($page)` should return a `\Illuminate\Contracts\Pagination\LengthAwarePaginator`.
+
+If your data is not already paginated, you can use `TagsPaginator::fromArray()`.
+
+## 2. Implement `RestrictedRegistryInterface` (Optional)
+If your sitemap needs **domain restrictions**, implement `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface`:
+```php
+<?php
+
+namespace App\Sitemaps;
+
+use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface;
+use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
+use MohammadZarifiyan\LaravelSitemapManager\Enums\SitemapRestrictionType;
+use MohammadZarifiyan\LaravelSitemapManager\TagsPaginator;
+
+class RestrictedPostRegistry implements RestrictedRegistryInterface
+{
+    public function getName(): string
+    {
+        return 'restricted-posts';
+    }
+
+    public function tags(int $page): LengthAwarePaginator
+    {
+        $tags = [
+            'https://localhost/first',
+            'https://localhost/second',
+        ];
+
+        return TagsPaginator::fromArray($page, $tags);
+    }
+
+    public function domains(): Collection|LazyCollection
+    {
+        // Return allowed or prohibited domains
+        return collect([
+            'example.com',
+            'another-site.com',
+        ]);
+    }
+
+    public function restrictionType(): SitemapRestrictionType
+    {
+        return SitemapRestrictionType::Prohibition;
+    }
+}
+```
+## 3. Register Your Registry in Configuration
+Open your `config/sitemap-manager.php` and add your registry class to the `registries` array:
+```php
+<?php
+
+return [
+    // rest of your configuration file
+    'registries' => [
+        \App\Sitemaps\PostRegistry::class,
+        \App\Sitemaps\RestrictedPostRegistry::class,
+    ],
+    // rest of your configuration file
+];
+```

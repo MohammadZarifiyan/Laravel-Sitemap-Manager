@@ -21,7 +21,7 @@ This package stores sitemap metadata in the database.
 Publish and run the migrations:
 
 ```shell
-php artisan vendor:publish --provider="MohammadZarifiyan\LaravelSitemapManager\Providers\InstantServiceProvider" --tag="sitemap-manager-migrations"
+php artisan vendor:publish --provider="MohammadZarifiyan\LaravelSitemapManager\Providers\SitemapManagerProvider" --tag="sitemap-manager-migrations"
   ```
 ```shell
 php artisan migrate
@@ -30,7 +30,7 @@ php artisan migrate
 ## Configuration (Optional)
 To publish the configuration file:
 ```shell
-php artisan vendor:publish --provider="MohammadZarifiyan\LaravelSitemapManager\Providers\InstantServiceProvider" --tag="sitemap-manager-config"
+php artisan vendor:publish --provider="MohammadZarifiyan\LaravelSitemapManager\Providers\SitemapManagerProvider" --tag="sitemap-manager-config"
 ```
 ## Routes
 Register the package routes in your `routes/web.php` file:

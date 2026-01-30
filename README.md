@@ -62,6 +62,7 @@ This document explains how to create a custom registry, handle pagination, and r
 
 ## 1. Implement `RegistryInterface`
 Create a new class that implements `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface`:
+
 ```php
 <?php
 
@@ -71,6 +72,7 @@ use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use MohammadZarifiyan\LaravelSitemapManager\TagsPaginator;
 use App\Models\Post;
+use Spatie\Sitemap\Tags\Url;
 
 class PostRegistry implements RegistryInterface
 {
@@ -82,13 +84,17 @@ class PostRegistry implements RegistryInterface
     public function tags(int $page): LengthAwarePaginator
     {
         // If you already have a LengthAwarePaginator:
-        return Post::query()
+        $posts = Post::query()
             ->where('published', true)
             ->paginate(config('sitemap-manager.tags-per-sitemap'), ['*'], 'page', $page);
 
-        // OR if you only have an array of URLs, use TagsPaginator:
-        // $urls = Post::query()->where('published', true)->pluck('url')->toArray();
-        // return TagsPaginator::fromArray($page, $urls);
+        $posts->transform(function (Post $post) {
+            $url = route('blog-post', $post);
+
+            return Url::create($url);
+        });
+        
+        return $posts;
     }
 }
 ```
@@ -102,6 +108,7 @@ If your data is not already paginated, you can use `TagsPaginator::fromArray()`.
 
 ## 2. Implement `RestrictedRegistryInterface` (Optional)
 If your sitemap needs **domain restrictions**, implement `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface`:
+
 ```php
 <?php
 
@@ -112,6 +119,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use MohammadZarifiyan\LaravelSitemapManager\Enums\SitemapRestrictionType;
 use MohammadZarifiyan\LaravelSitemapManager\TagsPaginator;
+use Spatie\Sitemap\Tags\Url;
 
 class RestrictedPostRegistry implements RestrictedRegistryInterface
 {
@@ -123,8 +131,8 @@ class RestrictedPostRegistry implements RestrictedRegistryInterface
     public function tags(int $page): LengthAwarePaginator
     {
         $tags = [
-            'https://localhost/first',
-            'https://localhost/second',
+            Url::create('https://localhost/first'),
+            Url::create('https://localhost/second'),
         ];
 
         return TagsPaginator::fromArray($page, $tags);

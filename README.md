@@ -10,7 +10,7 @@ Ideal for Laravel applications that need **reliable, repeatable, and automated s
 Install the package via Composer:
 
 ```shell
-composer require mohammad-zarifiyan/laravel-sitemap-manager
+composer require mohammad-zarifiyan/laravel-sitemap-manager:^2.0
 ```
 
 ## Database Migrations
@@ -69,10 +69,9 @@ Create a new class that implements `MohammadZarifiyan\LaravelSitemapManager\Inte
 namespace App\Sitemaps;
 
 use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use MohammadZarifiyan\LaravelSitemapManager\TagsPaginator;
 use App\Models\Post;
 use Spatie\Sitemap\Tags\Url;
+use Generator;
 
 class PostRegistry implements RegistryInterface
 {
@@ -81,16 +80,15 @@ class PostRegistry implements RegistryInterface
         return 'posts';
     }
 
-    public function tags(int $page): LengthAwarePaginator
+    public function tags(int $page): Generator
     {
-        $tagsPerPage = config('sitemap-manager.tags-per-sitemap');
         $posts = Post::query()
             ->where('published', true)
-            ->paginate(perPage: $tagsPerPage , page: $page);
+            ->cursor();
 
-        $posts->transform(fn (Post $post) => Url::create('http://localhost/blog/' . $post->slug));
-        
-        return $posts;
+        foreach ($posts as $post) {
+            yield Url::create('http://localhost/blog/' . $post->slug);
+        }
     }
 }
 ```
@@ -98,9 +96,7 @@ Notes:
 
 `getName()` returns a **unique name** for your registry.
 
-`tags($page)` should return a `\Illuminate\Contracts\Pagination\LengthAwarePaginator`.
-
-If your data is not already paginated, you can use `TagsPaginator::fromArray()`.
+`tags($page)` should return a `\Generator`.
 
 ## 2. Implement `RestrictedRegistryInterface` (Optional)
 If your sitemap needs **domain restrictions**, implement `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface`:
@@ -114,8 +110,8 @@ use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterfa
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use MohammadZarifiyan\LaravelSitemapManager\Enums\SitemapRestrictionType;
-use MohammadZarifiyan\LaravelSitemapManager\TagsPaginator;
 use Spatie\Sitemap\Tags\Url;
+use Generator;
 
 class RestrictedPostRegistry implements RestrictedRegistryInterface
 {
@@ -124,14 +120,10 @@ class RestrictedPostRegistry implements RestrictedRegistryInterface
         return 'restricted-posts';
     }
 
-    public function tags(int $page): LengthAwarePaginator
+    public function tags(int $page): Generator
     {
-        $tags = [
-            Url::create('https://localhost/first'),
-            Url::create('https://localhost/second'),
-        ];
-
-        return TagsPaginator::fromArray($page, $tags);
+        yield Url::create('https://localhost/first');
+        yield Url::create('https://localhost/second');
     }
 
     public function domains(): Collection|LazyCollection

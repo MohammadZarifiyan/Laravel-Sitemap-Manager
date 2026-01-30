@@ -4,7 +4,6 @@ namespace MohammadZarifiyan\LaravelSitemapManager\Console;
 
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -25,6 +24,9 @@ class RefreshSitemapsCommand extends Command
 
     protected array $savedSitemaps = [];
 
+    /**
+     * @throws Exception
+     */
     public function handle(): int
     {
         $registries = config('sitemap-manager.registries');
@@ -34,21 +36,13 @@ class RefreshSitemapsCommand extends Command
                 throw new Exception('Registry must be instance of \MohammadZarifiyan\LaravelSitemapManager\Interfaces\Registry.');
             }
 
-            $tagsPage = 1;
+            $tagsPerSitemap = config('sitemap-manager.tags-per-sitemap');
+            $tags = new LazyCollection($registry->tags(...));
 
-            do {
-                $tags = $registry->tags($tagsPage);
-
-                if ($tags->total() === 0) {
-                    break;
-                }
-
-                $sitemap = $this->generateSitemap($tags);
-                $sitemapModel = $this->updateOrCreateSitemapModel(
-                    $registry->getName(),
-                    $registry instanceof RestrictedRegistryInterface ? $registry->restrictionType() : null,
-                    $sitemap
-                );
+            foreach ($tags->chunk($tagsPerSitemap) as $sitemapTags) {
+                $sitemap = $this->generateSitemap($sitemapTags->toArray());
+                $restrictionType = $registry instanceof RestrictedRegistryInterface ? $registry->restrictionType() : null;
+                $sitemapModel = $this->updateOrCreateSitemapModel($registry->getName(), $restrictionType, $sitemap);
 
                 $sitemapModel->domains()->delete();
 
@@ -57,10 +51,7 @@ class RefreshSitemapsCommand extends Command
                 }
 
                 $this->savedSitemaps[$registry->getName()][] = $sitemapModel->getKey();
-
-                $tagsPage++;
             }
-            while ($tags->hasMorePages());
         }
 
         $this->removeOldSitemaps();
@@ -68,11 +59,11 @@ class RefreshSitemapsCommand extends Command
         return Command::SUCCESS;
     }
 
-    protected function generateSitemap(LengthAwarePaginator $tags): Sitemap
+    protected function generateSitemap(array $tags): Sitemap
     {
         $sitemap = Sitemap::create();
 
-        return $sitemap->add($tags->items());
+        return $sitemap->add($tags);
     }
 
     protected function updateOrCreateSitemapModel(string $name, ?SitemapRestrictionType $restrictionType, Sitemap $sitemap): SitemapModel

@@ -2,11 +2,11 @@
 
 namespace MohammadZarifiyan\LaravelSitemapManager\Interfaces;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Generator;
 
 interface RegistryInterface
 {
     public function getName(): string;
 
-    public function tags(int $page): LengthAwarePaginator;
+    public function tags(): Generator;
 }

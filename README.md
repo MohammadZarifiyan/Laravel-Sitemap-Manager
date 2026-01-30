@@ -88,11 +88,7 @@ class PostRegistry implements RegistryInterface
             ->where('published', true)
             ->paginate(perPage: $tagsPerPage , page: $page);
 
-        $posts->transform(function (Post $post) {
-            $url = route('blog-post', $post);
-
-            return Url::create($url);
-        });
+        $posts->transform(fn (Post $post) => Url::create('http://localhost/blog/' . $post->slug));
         
         return $posts;
     }

@@ -5,8 +5,6 @@ It creates new sitemap files, replaces outdated ones, and keeps everything up to
 
 Ideal for Laravel applications that need **reliable, repeatable, and automated sitemap handling**.
 
----
-
 # Installation
 
 Install the package via Composer:

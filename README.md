@@ -83,10 +83,10 @@ class PostRegistry implements RegistryInterface
 
     public function tags(int $page): LengthAwarePaginator
     {
-        // If you already have a LengthAwarePaginator:
+        $tagsPerPage = config('sitemap-manager.tags-per-sitemap');
         $posts = Post::query()
             ->where('published', true)
-            ->paginate(config('sitemap-manager.tags-per-sitemap'), ['*'], 'page', $page);
+            ->paginate(perPage: $tagsPerPage , page: $page);
 
         $posts->transform(function (Post $post) {
             $url = route('blog-post', $post);

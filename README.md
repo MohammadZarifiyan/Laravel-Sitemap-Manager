@@ -50,10 +50,11 @@ Make sure your server cron is configured to run Laravel’s scheduler.
 
 # How It Works
 
-1. Sitemap data is collected from registered sources
-2. Sitemap files are generated in chunks
-3. Old sitemap files are replaced safely
-4. Metadata is persisted in the database
+1. Sitemap data is collected from all registered registries.
+2. Sitemap files are generated in chunks based on the configured `tags-per-sitemap` limit.
+3. Existing sitemap files are safely replaced with the new ones.
+4. Metadata about generated sitemaps is stored in the database.
+5. Your sitemaps are served dynamically at the `/sitemap.xml` path, automatically adapting to your domain.
 
 # Creating a Custom Sitemap Registry
 Sitemap Manager allows you to **add your own data** sources by implementing the `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface` or `MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface`.

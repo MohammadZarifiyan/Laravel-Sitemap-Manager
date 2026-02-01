@@ -72,7 +72,7 @@ class SitemapController
                 });
                 $builder->orWhere(function (Builder $builder) use ($request) {
                     $builder->where('restriction_type', SitemapRestrictionType::Prohibition);
-                    $builder->orWhereDoesntHave('domains', function (Builder $builder) use ($request) {
+                    $builder->whereDoesntHave('domains', function (Builder $builder) use ($request) {
                         $builder->where('host', $request->getHost());
                         $builder->where(function (Builder $builder) use ($request) {
                             $builder->where('port', $request->getPort());

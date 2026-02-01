@@ -12,7 +12,7 @@ class RouteMixin
     {
         return function () {
             Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
-            Route::post('sitemaps/{name}-{index}.xml', [SitemapController::class, 'show'])
+            Route::get('sitemaps/{name}-{index}.xml', [SitemapController::class, 'show'])
                 ->whereNumber('index')
                 ->name('sitemap.show');
         };

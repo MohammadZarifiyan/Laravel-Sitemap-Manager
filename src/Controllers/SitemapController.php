@@ -19,7 +19,7 @@ class SitemapController
             $builder->whereNull('restriction_type');
             $builder->orWhere(function (Builder $builder) use ($request) {
                 $builder->where('restriction_type', SitemapRestrictionType::Legalization);
-                $builder->whereRelation('domains', function (Builder $builder) use ($request) {
+                $builder->whereHas('domains', function (Builder $builder) use ($request) {
                     $builder->where('host', $request->getHost());
                     $builder->where(function (Builder $builder) use ($request) {
                         $builder->where('port', $request->getPort());
@@ -29,7 +29,7 @@ class SitemapController
             });
             $builder->orWhere(function (Builder $builder) use ($request) {
                 $builder->where('restriction_type', SitemapRestrictionType::Prohibition);
-                $builder->whereDoesntHaveRelation('domains', function (Builder $builder) use ($request) {
+                $builder->whereDoesntHave('domains', function (Builder $builder) use ($request) {
                     $builder->where('host', $request->getHost());
                     $builder->where(function (Builder $builder) use ($request) {
                         $builder->where('port', $request->getPort());
@@ -62,7 +62,7 @@ class SitemapController
                 $builder->whereNull('restriction_type');
                 $builder->orWhere(function (Builder $builder) use ($request) {
                     $builder->where('restriction_type', SitemapRestrictionType::Legalization);
-                    $builder->whereRelation('domains', function (Builder $builder) use ($request) {
+                    $builder->whereHas('domains', function (Builder $builder) use ($request) {
                         $builder->where('host', $request->getHost());
                         $builder->where(function (Builder $builder) use ($request) {
                             $builder->where('port', $request->getPort());
@@ -72,7 +72,7 @@ class SitemapController
                 });
                 $builder->orWhere(function (Builder $builder) use ($request) {
                     $builder->where('restriction_type', SitemapRestrictionType::Prohibition);
-                    $builder->whereDoesntHaveRelation('domains', function (Builder $builder) use ($request) {
+                    $builder->orWhereDoesntHave('domains', function (Builder $builder) use ($request) {
                         $builder->where('host', $request->getHost());
                         $builder->where(function (Builder $builder) use ($request) {
                             $builder->where('port', $request->getPort());
@@ -84,6 +84,8 @@ class SitemapController
             ->offset($index)
             ->firstOrFail();
 
+        $url = route('sitemap.show', ['name' => $name, 'index' => $index]);
+
         return response()->streamDownload(
             function () use ($sitemap) {
                 $stream = Storage::disk($sitemap->disk)->readStream($sitemap->path);
@@ -94,7 +96,7 @@ class SitemapController
 
                 fpassthru($stream);
             },
-            basename($sitemap->path)
+            basename($url)
         );
     }
 }

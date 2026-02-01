@@ -31,11 +31,15 @@ class RefreshSitemapsCommand extends Command
     {
         $registries = config('sitemap-manager.registries');
 
-        foreach ($registries as $registry) {
-            if ($registry instanceof RegistryInterface === false) {
-                throw new Exception('Registry must be instance of \MohammadZarifiyan\LaravelSitemapManager\Interfaces\Registry.');
+        foreach ($registries as $registryClass) {
+            if (!is_subclass_of($registryClass, RegistryInterface::class)) {
+                throw new Exception('Registry must be instance of \MohammadZarifiyan\LaravelSitemapManager\Interfaces\RegistryInterface.');
             }
 
+            /**
+             * @var RegistryInterface $registry
+             */
+            $registry = app($registryClass);
             $tagsPerSitemap = config('sitemap-manager.tags-per-sitemap');
             $tags = new LazyCollection($registry->tags(...));
 

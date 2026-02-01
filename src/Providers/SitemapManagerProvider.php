@@ -5,6 +5,7 @@ namespace MohammadZarifiyan\LaravelSitemapManager\Providers;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use MohammadZarifiyan\LaravelSitemapManager\Console\RefreshSitemapsCommand;
 use MohammadZarifiyan\LaravelSitemapManager\Events;
 use MohammadZarifiyan\LaravelSitemapManager\Listeners;
 use MohammadZarifiyan\LaravelSitemapManager\Mixin\RouteMixin;
@@ -30,5 +31,7 @@ class SitemapManagerProvider extends ServiceProvider
             Events\SitemapDeleted::class,
             Listeners\SitemapDeleted\DeleteFile::class
         );
+
+        $this->commands([RefreshSitemapsCommand::class]);
     }
 }

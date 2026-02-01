@@ -33,11 +33,11 @@ php artisan vendor:publish --provider="MohammadZarifiyan\LaravelSitemapManager\P
 ## Routes
 Register the package routes in your `routes/web.php` file:
 ```php
-use MohammadZarifiyan\LaravelSitemapManager\SitemapManager;
+use Illuminate\Support\Facades\Route;
 
-SitemapManager::routes();
+Route::sitemap();
 ```
-These routes are used to serve sitemap files.
+This code registers sitemap serving routes.
 
 ## Scheduling
 To keep sitemaps updated automatically, register the command in Laravel’s scheduler:

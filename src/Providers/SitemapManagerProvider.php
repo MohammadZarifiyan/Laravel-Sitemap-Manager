@@ -3,12 +3,19 @@
 namespace MohammadZarifiyan\LaravelSitemapManager\Providers;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use MohammadZarifiyan\LaravelSitemapManager\Events;
 use MohammadZarifiyan\LaravelSitemapManager\Listeners;
+use MohammadZarifiyan\LaravelSitemapManager\Mixin\RouteMixin;
 
 class SitemapManagerProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        Route::mixin(new RouteMixin);
+    }
+
     public function boot(): void
     {
         $this->publishes([

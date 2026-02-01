@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sitemap_domains', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\MohammadZarifiyan\LaravelSitemapManager\Models\Sitemap::class)->constrained();
+            $table->foreignIdFor(\MohammadZarifiyan\LaravelSitemapManager\Models\Sitemap::class)->constrained()->cascadeOnDelete();
             $table->string('host');
             $table->unsignedBigInteger('port')->nullable();
             $table->timestamps();

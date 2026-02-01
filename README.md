@@ -10,7 +10,7 @@ Ideal for Laravel applications that need **reliable, repeatable, and automated s
 Install the package via Composer:
 
 ```shell
-composer require mohammad-zarifiyan/laravel-sitemap-manager:^2.0
+composer require mohammad-zarifiyan/laravel-sitemap-manager:^3.0
 ```
 
 ## Database Migrations

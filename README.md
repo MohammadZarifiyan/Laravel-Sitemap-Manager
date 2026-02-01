@@ -106,6 +106,7 @@ If your sitemap needs **domain restrictions**, implement `MohammadZarifiyan\Lara
 
 namespace App\Sitemaps;
 
+use MohammadZarifiyan\LaravelSitemapManager\DataTransferObjects\Domain;
 use MohammadZarifiyan\LaravelSitemapManager\Interfaces\RestrictedRegistryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
@@ -130,8 +131,8 @@ class RestrictedPostRegistry implements RestrictedRegistryInterface
     {
         // Return allowed or prohibited domains
         return collect([
-            'example.com',
-            'another-site.com',
+            new Domain('example.com'),
+            new Domain('another-site.com'),
         ]);
     }
 

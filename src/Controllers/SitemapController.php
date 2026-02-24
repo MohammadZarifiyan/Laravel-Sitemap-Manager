@@ -43,9 +43,10 @@ class SitemapController
 
         foreach ($groupedSitemaps as $name => $sitemaps) {
             foreach ($sitemaps as $index => $sitemap) {
-                $sitemapTag = Sitemap::create(
-                    route('sitemap.show', ['name' => $name, 'index' => $index]),
-                );
+                $url = route('sitemap.show', [
+                    'slug' => sprintf('%s-%d', $name, $index),
+                ]);
+                $sitemapTag = Sitemap::create($url);
                 $sitemapTag->setLastModificationDate($sitemap->updated_at);
 
                 $sitemapIndex->add($sitemapTag);
@@ -55,8 +56,15 @@ class SitemapController
         return $sitemapIndex->toResponse($request);
     }
 
-    public function show(Request $request, string $name, int $index)
+    public function show(Request $request, string $slug)
     {
+        if (!preg_match('/^(.*)-(\d+)$/', $slug, $match)) {
+            abort(404);
+        }
+
+        $name = $match[1];
+        $index = $match[2];
+
         $sitemap = SitemapModel::where('name', $name)
             ->where(function (Builder $builder) use ($request) {
                 $builder->whereNull('restriction_type');
@@ -84,7 +92,9 @@ class SitemapController
             ->offset($index)
             ->firstOrFail();
 
-        $url = route('sitemap.show', ['name' => $name, 'index' => $index]);
+        $url = route('sitemap.show', [
+            'slug' => sprintf('%s-%d', $name, $index)
+        ]);
 
         return response()->streamDownload(
             function () use ($sitemap) {
